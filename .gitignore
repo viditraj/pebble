@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+*.egg
+dist/
+build/
+.eggs/
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Training artifacts
+checkpoints/
+logs/
+wandb/
+runs/
+
+# Data (downloaded separately)
+data/raw/
+data/processed/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets
+.env
+*.key

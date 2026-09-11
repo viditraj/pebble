@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 160">
+  <defs>
+    <linearGradient id="grad-light" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7c3aed;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2563eb;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="600" height="160" fill="transparent"/>
+  <!-- Pebble stone icon -->
+  <g transform="translate(200, 80)">
+    <ellipse cx="0" cy="0" rx="28" ry="22" fill="url(#grad-light)" opacity="0.9"/>
+    <ellipse cx="0" cy="-2" rx="24" ry="18" fill="none" stroke="#a78bfa" stroke-width="1" opacity="0.5"/>
+    <ellipse cx="-6" cy="-6" rx="6" ry="4" fill="#ffffff" opacity="0.3" transform="rotate(-20)"/>
+  </g>
+  <!-- Text -->
+  <text x="255" y="90" font-family="'Segoe UI', system-ui, -apple-system, sans-serif" font-size="56" font-weight="700" fill="#0f172a" letter-spacing="-2">pebble</text>
+  <!-- Tagline -->
+  <text x="300" y="125" font-family="'Segoe UI', system-ui, -apple-system, sans-serif" font-size="14" fill="#64748b" text-anchor="middle" letter-spacing="3">BUILD AN LLM FROM SCRATCH</text>
+</svg>
