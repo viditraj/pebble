@@ -1,0 +1,23 @@
+# Pebble - Dependencies
+# Install with: pip install -r requirements.txt
+#
+# PyTorch must be installed separately with the correct CUDA version:
+#   pip install torch torchvision --index-url https://download.pytorch.org/whl/cu132
+# See README.md for details.
+
+# Core
+numpy>=2.0
+einops>=0.8
+tqdm>=4.66
+pyyaml>=6.0
+
+# Data
+datasets>=5.0
+tokenizers>=0.20
+pandas>=2.0
+
+# Experiment tracking
+wandb>=0.30
+
+# Testing
+pytest>=9.0
