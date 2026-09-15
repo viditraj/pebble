@@ -1,33 +1,27 @@
-<p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/pebble-banner-dark.svg">
-    <source media="(prefers-color-scheme: light)" srcset="assets/pebble-banner-light.svg">
-    <img alt="Pebble" src="assets/pebble-banner-dark.svg" width="600">
-  </picture>
-</p>
+<div align="center">
 
-<h3 align="center">Build a tool-calling language model from absolute zero.</h3>
+<img src="assets/pebble-banner-dark.svg" alt="Pebble" width="100%">
 
-<p align="center">
-  <em>No frameworks. No magic. Just math, code, and a single GPU.</em>
-</p>
+### Build a tool-calling language model from absolute zero.
 
-<p align="center">
-  <a href="#quick-start"><img src="https://img.shields.io/badge/Quick_Start-5_min-blue?style=flat-square" alt="Quick Start"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="License: MIT"></a>
-  <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/Python-3.10+-blue?style=flat-square&logo=python&logoColor=white" alt="Python 3.10+"></a>
-  <a href="https://pytorch.org/"><img src="https://img.shields.io/badge/PyTorch-2.0+-ee4c2c?style=flat-square&logo=pytorch&logoColor=white" alt="PyTorch 2.0+"></a>
-</p>
+*No frameworks. No magic. Just math, code, and a single GPU.*
 
-<p align="center">
-  <a href="#what-is-pebble">What is Pebble</a> &bull;
-  <a href="#what-youll-build">What You'll Build</a> &bull;
-  <a href="#quick-start">Quick Start</a> &bull;
-  <a href="#the-curriculum">Curriculum</a> &bull;
-  <a href="#architecture">Architecture</a> &bull;
-  <a href="#tool-calling">Tool Calling</a> &bull;
-  <a href="#faq">FAQ</a>
-</p>
+[![Quick Start](https://img.shields.io/badge/Quick_Start-5_min-blue?style=flat-square)](#quick-start)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
+[![Python 3.10+](https://img.shields.io/badge/Python-3.10+-blue?style=flat-square&logo=python&logoColor=white)](https://www.python.org/downloads/)
+[![PyTorch 2.0+](https://img.shields.io/badge/PyTorch-2.0+-ee4c2c?style=flat-square&logo=pytorch&logoColor=white)](https://pytorch.org/)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen?style=flat-square)](#contributing)
+[![Stars](https://img.shields.io/github/stars/viditraj/pebble?style=flat-square&color=yellow)](https://github.com/viditraj/pebble/stargazers)
+
+**[What is Pebble](#what-is-pebble)** &nbsp;&#183;&nbsp;
+**[What You'll Build](#what-youll-build)** &nbsp;&#183;&nbsp;
+**[Quick Start](#quick-start)** &nbsp;&#183;&nbsp;
+**[Curriculum](#the-curriculum)** &nbsp;&#183;&nbsp;
+**[Architecture](#architecture)** &nbsp;&#183;&nbsp;
+**[Tool Calling](#tool-calling)** &nbsp;&#183;&nbsp;
+**[FAQ](#faq)**
+
+</div>
 
 ---
 
@@ -37,7 +31,7 @@ Pebble is an open-source, from-scratch implementation of a **25M-parameter langu
 
 No wrappers around HuggingFace. No fine-tuning someone else's model and calling it yours. You write **every layer**, train on **your own data**, and watch a pile of random weights learn to use a calculator.
 
-```
+```text
 You:     What's 47 * 89?
 Pebble:  <|tool_call|> calculator(expression="47 * 89") <|end|>
          <|result|> 4183 <|end|>
@@ -46,9 +40,10 @@ Pebble:  <|tool_call|> calculator(expression="47 * 89") <|end|>
 
 ### Why Pebble exists
 
-There are mass of blog posts explaining attention "intuitively." There are massive repos with 10,000-line training frameworks. Pebble sits in the gap between the two: **production-grade concepts, implemented simply enough to fit in your head.**
+There's a glut of blog posts explaining attention "intuitively," and a handful of 10,000-line training frameworks that bury the ideas under abstraction. Pebble sits in the gap between the two: **production-grade concepts, implemented simply enough to fit in your head.**
 
 After completing this project, you will understand:
+
 - How a transformer works — not the hand-wavy version, the actual matrix multiplications
 - How BPE tokenization breaks text into tokens (you'll build one)
 - How pretraining, SFT, and DPO alignment work end-to-end
@@ -64,7 +59,7 @@ You'll go from `torch.randn` to a working tool-calling chatbot.
 Every component is implemented from scratch in clean, documented PyTorch:
 
 | Component | What You'll Implement | Key Concepts |
-|-----------|----------------------|--------------|
+|---|---|---|
 | **Tokenizer** | Byte-Pair Encoding (BPE) from raw bytes | Subword tokenization, merge rules, special tokens |
 | **Embeddings** | Token + Rotary Position Embeddings (RoPE) | Lookup tables, rotation matrices, relative position |
 | **Attention** | Grouped Query Attention (GQA) with causal mask | Q/K/V projections, scaled dot-product, KV-head sharing |
@@ -89,8 +84,7 @@ Every component is implemented from scratch in clean, documented PyTorch:
 - CUDA 12.0+
 - ~10 GB disk space for datasets
 
-> **No GPU?** The model architecture and tokenizer code works on CPU.  
-> Pretraining will be slow but possible for small experiments.
+> **No GPU?** The model architecture and tokenizer code work on CPU. Pretraining will be slow but possible for small experiments.
 
 ### Setup
 
@@ -133,7 +127,7 @@ python scripts/generate.py --checkpoint checkpoints/sft/latest.pt --tools
 
 Pebble is structured as a learning journey. Each module builds on the last, with heavily commented code that explains the *why*, not just the *how*.
 
-### 1. Tokenizer &mdash; `src/tokenizer/`
+### 1. Tokenizer — `src/tokenizer/`
 
 > *"You can't feed text to a neural network. You feed numbers."*
 
@@ -147,73 +141,37 @@ text = tokenizer.decode(tokens)             # "Hello, world!"
 
 **You'll implement**: byte-level BPE training, merge rules, encode/decode, special tokens for tool calling (`<|tool_call|>`, `<|result|>`, etc.)
 
-<details>
-<summary><b>Key insight: Why BPE?</b></summary>
-
-Character-level tokenization creates sequences that are too long. Word-level creates vocabularies that are too large and can't handle new words. BPE finds the sweet spot: common words become single tokens, rare words get split into meaningful subwords. The word "unhappiness" might become `["un", "happiness"]` — and the model learns that "un-" means negation.
-
-</details>
+**Key insight — why BPE?** Character-level tokenization creates sequences that are too long. Word-level creates vocabularies that are too large and can't handle new words. BPE finds the sweet spot: common words become single tokens, rare words get split into meaningful subwords. The word "unhappiness" might become `["un", "happiness"]` — and the model learns that "un-" means negation.
 
 ---
 
-### 2. Model Architecture &mdash; `src/model/`
+### 2. Model Architecture — `src/model/`
 
 > *"A transformer is just attention + feed-forward, repeated."*
 
-Build a modern LLaMA-style transformer. Not GPT-2's architecture from 2019 — the architecture actually used in today's best open models.
+Build a modern LLaMA-style transformer — not GPT-2's 2019 design, but the architecture actually used in today's best open models.
 
-```
-Input Token IDs
-       |
-  [ Embedding ] ──────────────────────────────────────────┐
-       |                                                   |
-       v                                            (weight tying)
-  ┌─────────────────────┐                                  |
-  │  Transformer Block  │ x8                               |
-  │  ┌───────────────┐  │                                  |
-  │  │    RMSNorm     │  │                                  |
-  │  │       |        │  │                                  |
-  │  │  GQA Attention │  │  8 Q-heads, 4 KV-heads          |
-  │  │  + RoPE        │  │  head_dim = 64                  |
-  │  │       |        │  │                                  |
-  │  │   + Residual   │  │                                  |
-  │  │       |        │  │                                  |
-  │  │    RMSNorm     │  │                                  |
-  │  │       |        │  │                                  |
-  │  │  SwiGLU FFN    │  │  d_ff = 1376                    |
-  │  │       |        │  │                                  |
-  │  │   + Residual   │  │                                  |
-  │  └───────────────┘  │                                  |
-  └─────────────────────┘                                  |
-       |                                                   |
-  [ RMSNorm ]                                              |
-       |                                                   |
-  [ Linear Head ] ─────────────────────────────────────────┘
-       |
-  Output Logits (vocab_size)
-```
+<div align="center">
+<img src="assets/diagram-architecture.svg" alt="Pebble transformer architecture: token embedding into 8 stacked transformer blocks (RMSNorm, GQA attention with RoPE, residual add, RMSNorm, SwiGLU FFN, residual add), then a final RMSNorm and a weight-tied linear head producing output logits" width="620">
+</div>
 
 **You'll implement:**
+
 - **RoPE** (Rotary Positional Embeddings) — how rotation encodes position
 - **GQA** (Grouped Query Attention) — the same trick LLaMA 2/3 and Mistral use to cut memory usage
 - **SwiGLU** — the gated activation that outperforms ReLU and GELU
 - **RMSNorm** — simpler and faster than LayerNorm
 - **Weight tying** — sharing the embedding and output projection saves millions of parameters
 
-<details>
-<summary><b>Key insight: Why GQA instead of standard Multi-Head Attention?</b></summary>
-
-Standard MHA uses separate Key and Value projections for every head. With 8 heads, that's 8 sets of K and V matrices. GQA shares K/V across groups of heads — our model uses 8 query heads but only 4 KV heads. This halves the KV-cache memory during inference with negligible quality loss. It's the same reason LLaMA 2 70B can fit on 2 GPUs instead of 4.
-
-</details>
+**Key insight — why GQA instead of standard multi-head attention?** Standard MHA uses separate key and value projections for every head. With 8 heads, that's 8 sets of K and V matrices. GQA shares K/V across groups of heads — our model uses 8 query heads but only 4 KV heads. This halves the KV-cache memory during inference with negligible quality loss. It's the same reason LLaMA 2 70B can fit on 2 GPUs instead of 4.
 
 ---
 
-### 3. Training &mdash; `src/training/`
+### 3. Training — `src/training/`
 
 > *"Training is just: predict the next token, compute how wrong you were, adjust weights. Repeat 50,000 times."*
 
-Build the complete training pipeline from scratch — the optimizer, the scheduler, the training loop, mixed-precision, gradient accumulation, checkpointing, and logging.
+Build the complete training pipeline from scratch — the optimizer, the scheduler, the training loop, mixed precision, gradient accumulation, checkpointing, and logging.
 
 ```yaml
 # configs/pebble_25m.yaml
@@ -239,39 +197,36 @@ training:
 ```
 
 **You'll implement:**
+
 - **AdamW** from scratch (then use PyTorch's for speed)
 - **Cosine annealing** with warmup — the standard LR schedule
 - **Mixed precision** (BF16) — halves memory, doubles throughput
 - **Gradient accumulation** — simulate large batches on small GPUs
 - **Gradient checkpointing** — trade compute for memory
 
-<details>
-<summary><b>Key insight: Memory budget on 8GB VRAM</b></summary>
+**Key insight — memory budget on 8GB VRAM:**
 
-```
-Model weights (BF16):     ~50 MB   (25M x 2 bytes)
-Optimizer states (FP32):  ~200 MB  (25M x 8 bytes — AdamW stores m and v)
-Gradients (BF16):         ~50 MB
-Activations:              ~2-4 GB  (batch_size x seq_len x d_model x layers)
-CUDA overhead:            ~500 MB
-─────────────────────────────────────
-Total:                    ~3-5 GB   (fits comfortably in 8GB)
-```
+| Component | Memory |
+|---|---|
+| Model weights (BF16) | ~50 MB (25M &#215; 2 bytes) |
+| Optimizer states (FP32) | ~200 MB (25M &#215; 8 bytes — AdamW stores m and v) |
+| Gradients (BF16) | ~50 MB |
+| Activations | ~2–4 GB (batch_size &#215; seq_len &#215; d_model &#215; layers) |
+| CUDA overhead | ~500 MB |
+| **Total** | **~3–5 GB** (fits comfortably in 8GB) |
 
-The model is small. The activations are what eat your memory. That's why gradient checkpointing and batch size tuning matter more than model size at this scale.
-
-</details>
+The model is small — the activations are what eat your memory. That's why gradient checkpointing and batch size tuning matter more than model size at this scale.
 
 ---
 
-### 4. Data &mdash; `src/data/`
+### 4. Data — `src/data/`
 
 > *"Your model is only as good as the data you feed it."*
 
 Build the full data pipeline: download, clean, tokenize, pack, and serve sequences efficiently.
 
 | Dataset | Tokens | Purpose |
-|---------|--------|---------|
+|---|---|---|
 | TinyStories | ~500M | Coherent narrative and basic grammar |
 | OpenWebText (subset) | ~200M | General world knowledge |
 | The Stack (Python, subset) | ~100M | Code structure and logic |
@@ -279,6 +234,7 @@ Build the full data pipeline: download, clean, tokenize, pack, and serve sequenc
 | **Total** | **~800M** | |
 
 **You'll implement:**
+
 - Data downloading and cleaning (HTML removal, unicode normalization, deduplication)
 - Efficient tokenization with your BPE tokenizer
 - Sequence packing to minimize padding waste
@@ -287,7 +243,7 @@ Build the full data pipeline: download, clean, tokenize, pack, and serve sequenc
 
 ---
 
-### 5. Fine-Tuning &mdash; SFT + DPO
+### 5. Fine-Tuning — SFT + DPO
 
 > *"Pretraining teaches the model language. Fine-tuning teaches it to be useful."*
 
@@ -322,7 +278,7 @@ loss = -log_sigmoid(beta * (log_ratio_chosen - log_ratio_rejected))
 
 ---
 
-### 6. Inference Engine &mdash; `src/inference/`
+### 6. Inference Engine — `src/inference/`
 
 > *"A trained model is useless if you can't run it."*
 
@@ -346,14 +302,15 @@ response = model.chat(
 ```
 
 **You'll implement:**
-- **KV-Cache** — makes generation O(n) per token instead of O(n^2)
+
+- **KV-Cache** — makes generation O(n) per token instead of O(n&#178;)
 - **Sampling** — temperature, top-k, top-p (nucleus), repetition penalty
 - **Tool executor** — parse model output, call functions, feed results back
 - **Streaming** — token-by-token output for real-time chat
 
 ---
 
-### 7. Optimization &mdash; Quantization & Export
+### 7. Optimization — Quantization & Export
 
 > *"The best model is the one that actually runs on your hardware."*
 
@@ -376,13 +333,13 @@ python scripts/export.py --checkpoint checkpoints/sft/latest.pt --format gguf --
 ### Pebble-25M
 
 | Hyperparameter | Value | Why |
-|----------------|-------|-----|
-| Parameters | ~25M | Trainable on a single 8GB GPU in ~24-48 hrs |
+|---|---|---|
+| Parameters | ~25M | Trainable on a single 8GB GPU in ~24–48 hrs |
 | Layers | 8 | Deep enough to learn language patterns |
 | Hidden dim | 512 | Balanced compute-to-parameter ratio |
 | Attention heads | 8 (Q) / 4 (KV) | GQA for memory efficiency |
 | Head dim | 64 | Standard, works well with Flash Attention |
-| FFN dim | 1376 | ~8/3 x hidden (SwiGLU sizing) |
+| FFN dim | 1376 | ~8/3 &#215; hidden (SwiGLU sizing) |
 | Vocab size | 16,384 | Small but effective for English + code |
 | Context length | 1024 | Expandable to 2048 via RoPE |
 | Positional encoding | RoPE | Modern standard, relative position aware |
@@ -392,7 +349,7 @@ python scripts/export.py --checkpoint checkpoints/sft/latest.pt --format gguf --
 ### Pebble-100M (Stretch Goal)
 
 | Hyperparameter | Value |
-|----------------|-------|
+|---|---|
 | Parameters | ~100M |
 | Layers | 12 |
 | Hidden dim | 768 |
@@ -430,34 +387,9 @@ weather = Tool(
 
 ### How It Works
 
-```
-                        ┌──────────────────────┐
-   User message ──────> │                      │
-                        │    Pebble Model       │
-   Tool results ──────> │                      │
-                        └──────────┬───────────┘
-                                   │
-                          Generates tokens
-                                   │
-                      ┌────────────┴────────────┐
-                      │                         │
-                Regular text              <|tool_call|>
-                      │                         │
-                      v                         v
-                Print to user           ┌───────────────┐
-                                        │ Tool Executor  │
-                                        │ Parse function │
-                                        │ + arguments    │
-                                        └───────┬───────┘
-                                                │
-                                                v
-                                        Execute function
-                                                │
-                                                v
-                                        Format <|result|>
-                                                │
-                                        Feed back to model
-```
+<div align="center">
+<img src="assets/diagram-tool-calling.svg" alt="Tool calling flow: user message and tool results feed into the Pebble model, which generates either regular text printed to the user, or a tool_call token that goes to a tool executor, which parses the function and arguments, executes it, formats the result, and feeds it back into the model" width="640">
+</div>
 
 The model learns to emit special tokens (`<|tool_call|>`, `<|end|>`) during SFT. The inference engine detects these tokens, pauses generation, executes the tool, injects the result, and resumes generation. It's the same pattern used by GPT-4, Claude, and Gemini — just transparent and simple.
 
@@ -465,7 +397,7 @@ The model learns to emit special tokens (`<|tool_call|>`, `<|end|>`) during SFT.
 
 ## Project Structure
 
-```
+```text
 pebble/
 ├── configs/
 │   ├── pebble_25m.yaml          # 25M model config
@@ -513,9 +445,9 @@ Every file is a learning resource. Code is commented to explain *why*, not just 
 ## Hardware Requirements
 
 | Setup | What You Can Do | Training Time (25M) |
-|-------|----------------|---------------------|
-| **NVIDIA GPU, 8+ GB VRAM** | Full pretraining + SFT + DPO | ~24-48 hours |
-| **NVIDIA GPU, 4 GB VRAM** | Reduced batch size, gradient checkpointing | ~48-96 hours |
+|---|---|---|
+| **NVIDIA GPU, 8+ GB VRAM** | Full pretraining + SFT + DPO | ~24–48 hours |
+| **NVIDIA GPU, 4 GB VRAM** | Reduced batch size, gradient checkpointing | ~48–96 hours |
 | **CPU only** | Run architecture code, small experiments | Days (not recommended for full training) |
 | **Google Colab (free)** | Small experiments, architecture exploration | Limited by session time |
 
@@ -528,7 +460,7 @@ Tested on: NVIDIA RTX PRO 2000 (8 GB), 16 GB RAM, Intel Core Ultra 7 265H.
 These are the papers whose ideas you'll implement. Reading them is optional but recommended.
 
 | Paper | Year | What You'll Use From It |
-|-------|------|------------------------|
+|---|---|---|
 | [Attention Is All You Need](https://arxiv.org/abs/1706.03762) | 2017 | The transformer architecture |
 | [Language Models are Unsupervised Multitask Learners](https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf) | 2019 | GPT-2 pretraining approach |
 | [RoFormer: Enhanced Transformer with Rotary Position Embedding](https://arxiv.org/abs/2104.09864) | 2021 | RoPE implementation |
@@ -543,15 +475,16 @@ These are the papers whose ideas you'll implement. Reading them is optional but 
 ## FAQ
 
 <details>
-<summary><b>Is 25M parameters enough to learn anything useful?</b></summary>
+<summary><strong>Is 25M parameters enough to learn anything useful?</strong></summary><br>
 
 Yes. 25M parameters is enough to learn coherent English, basic reasoning, and structured tool calling. It won't write essays or pass the bar exam, but it will demonstrably learn language patterns and reliably call tools when prompted. The point isn't to compete with GPT-4 — it's to understand how GPT-4 works by building something real.
 </details>
 
 <details>
-<summary><b>How is this different from nanoGPT?</b></summary>
+<summary><strong>How is this different from nanoGPT?</strong></summary><br>
 
 nanoGPT is a minimal GPT-2 reimplementation optimized for speed and simplicity. Pebble is a learning-focused project that goes further:
+
 - Modern architecture (RoPE, GQA, SwiGLU, RMSNorm) vs GPT-2's design
 - Full fine-tuning pipeline (SFT + DPO), not just pretraining
 - Tool calling capability — the model learns to use external functions
@@ -561,9 +494,10 @@ nanoGPT is a minimal GPT-2 reimplementation optimized for speed and simplicity. 
 </details>
 
 <details>
-<summary><b>How is this different from rasbt/LLMs-from-scratch?</b></summary>
+<summary><strong>How is this different from rasbt/LLMs-from-scratch?</strong></summary><br>
 
 Raschka's excellent book builds a GPT-2 style model for educational purposes. Pebble differs in:
+
 - **Modern architecture**: GQA, RoPE, SwiGLU instead of GPT-2's MHA, learned positional embeddings, GELU
 - **Tool calling**: The model learns to call external functions — a capability not covered in the book
 - **DPO alignment**: Full preference optimization pipeline
@@ -572,19 +506,19 @@ Raschka's excellent book builds a GPT-2 style model for educational purposes. Pe
 </details>
 
 <details>
-<summary><b>Can I run this without a GPU?</b></summary>
+<summary><strong>Can I run this without a GPU?</strong></summary><br>
 
-The architecture code, tokenizer, and data pipeline all work on CPU. Training on CPU is technically possible but will take days instead of hours for the full 25M model. For learning the concepts, you can train a tiny version (1-5M params) on CPU for small experiments.
+The architecture code, tokenizer, and data pipeline all work on CPU. Training on CPU is technically possible but will take days instead of hours for the full 25M model. For learning the concepts, you can train a tiny version (1–5M params) on CPU for small experiments.
 </details>
 
 <details>
-<summary><b>What's the Chinchilla-optimal training budget for 25M params?</b></summary>
+<summary><strong>What's the Chinchilla-optimal training budget for 25M params?</strong></summary><br>
 
-The Chinchilla scaling laws suggest ~500M tokens for a 25M parameter model (20x parameter count). We train on ~800M unique tokens over multiple epochs, slightly over-training to ensure the model fully converges. The total tokens seen during training is ~3-6B (with repetition).
+The Chinchilla scaling laws suggest ~500M tokens for a 25M parameter model (20&#215; parameter count). We train on ~800M unique tokens over multiple epochs, slightly over-training to ensure the model fully converges. The total tokens seen during training is ~3–6B (with repetition).
 </details>
 
 <details>
-<summary><b>Can I scale this up to a larger model?</b></summary>
+<summary><strong>Can I scale this up to a larger model?</strong></summary><br>
 
 Yes. The `configs/pebble_100m.yaml` config defines a 100M parameter variant that trains on the same hardware with gradient checkpointing. The code is written to be architecture-agnostic — change the config, and you get a bigger model. Beyond 100M, you'll want multiple GPUs or cloud compute.
 </details>
@@ -622,8 +556,4 @@ MIT License. See [LICENSE](LICENSE) for details.
 
 Use it, learn from it, build on it. That's the point.
 
----
-
-<p align="center">
-  <sub>If this repo helped you understand LLMs better, a star would mean a lot.</sub>
-</p>
+If this repo helped you understand LLMs better, a star would mean a lot. ⭐
