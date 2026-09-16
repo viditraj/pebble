@@ -443,34 +443,151 @@ MESSAGE_RESPONSES = [
 ]
 
 # Plain chat (no tool needed) — model should respond directly
+# IMPORTANT: These must be diverse enough to avoid memorization
 PLAIN_CHATS = [
+    # Greetings
     ("Hi!", "Hello! How can I help you?"),
+    ("Hey there!", "Hey! What can I do for you today?"),
     ("How are you?", "I'm doing well, thanks for asking! How can I help you today?"),
-    ("What are you?", "I'm Pebble, a small language model. I can help you with questions, tell stories, and use tools when needed."),
-    ("Tell me a joke.", "Why did the computer go to the doctor? Because it had a virus!"),
-    ("What's your name?", "My name is Pebble. I'm here to help!"),
-    ("Thank you!", "You're welcome! Let me know if you need anything else."),
-    ("Goodbye!", "Goodbye! Have a great day!"),
-    ("Can you help me?", "Of course! What do you need help with?"),
-    ("What can you do?", "I can answer questions, search the web, do math, translate text, check the weather, and more. Just ask!"),
-    ("I'm bored.", "How about I tell you a fun fact? Honey never spoils! Archaeologists found 3000-year-old honey in Egyptian tombs that was still edible."),
-    ("Tell me something interesting.", "Did you know that octopuses have three hearts? Two pump blood to the gills, and one pumps it to the rest of the body."),
     ("Good morning!", "Good morning! Hope you have a wonderful day ahead. What can I do for you?"),
-    ("I'm sad today.", "I'm sorry to hear that. Sometimes talking about it can help. Is there anything I can do to cheer you up?"),
+    ("Good afternoon!", "Good afternoon! How can I assist you?"),
+    ("Good evening!", "Good evening! What can I help you with?"),
+    ("Hello, Pebble!", "Hello! Nice to meet you. How can I help?"),
+    ("Hi, I'm new here.", "Welcome! I'm Pebble. Feel free to ask me anything."),
+    ("Howdy!", "Howdy! What brings you here today?"),
+    ("What's up?", "Not much! I'm here and ready to help. What do you need?"),
+    # About the assistant
+    ("What are you?", "I'm Pebble, a small language model. I can help you with questions, tell stories, and use tools when needed."),
+    ("What's your name?", "My name is Pebble. I'm here to help!"),
+    ("Who made you?", "I was built as a small language model project. I'm designed to help answer questions and use tools."),
+    ("Are you a robot?", "I'm a language model — I process text and generate responses. I don't have a physical body, but I'm happy to help!"),
+    ("Are you an AI?", "Yes, I'm an AI language model called Pebble. I can help with questions, calculations, and more."),
+    ("What can you do?", "I can answer questions, search the web, do math, translate text, check the weather, and more. Just ask!"),
+    ("How do you work?", "I'm a neural network trained on text data. I read your message and predict the most helpful response. I can also use tools when needed."),
+    ("Can you help me?", "Of course! What do you need help with?"),
+    # Pleasantries
+    ("Thank you!", "You're welcome! Let me know if you need anything else."),
+    ("Thanks a lot!", "Happy to help! Anything else you'd like to know?"),
+    ("That was helpful!", "Glad I could help! Feel free to ask more questions."),
+    ("Goodbye!", "Goodbye! Have a great day!"),
+    ("See you later!", "See you! Come back anytime."),
+    ("Bye!", "Bye! Take care!"),
     ("You're smart!", "Thank you! I try my best. Is there something you'd like help with?"),
+    ("You're awesome!", "Thanks! That means a lot. What can I help you with next?"),
+    ("I appreciate your help.", "That's very kind! I'm always here if you need anything."),
+    ("Great job!", "Thank you! Happy to be of help."),
+    # Emotions
+    ("I'm bored.", "How about I tell you a fun fact? Honey never spoils! Archaeologists found 3000-year-old honey in Egyptian tombs that was still edible."),
+    ("I'm sad today.", "I'm sorry to hear that. Sometimes talking about it can help. Is there anything I can do to cheer you up?"),
+    ("I'm happy today!", "That's wonderful to hear! What's making you happy?"),
+    ("I'm feeling anxious.", "I understand. Taking a few deep breaths can help. Would you like to talk about what's on your mind?"),
+    ("I had a bad day.", "I'm sorry about that. Tomorrow is a fresh start. Is there something I can help with to make things a bit better?"),
+    ("I'm excited!", "That's great! What are you excited about?"),
+    ("I'm tired.", "Rest is important! Maybe take a short break if you can. Is there something quick I can help you with?"),
+    ("I feel lonely.", "I'm here to talk if you need someone. What's on your mind?"),
+    # Jokes and fun
+    ("Tell me a joke.", "Why did the computer go to the doctor? Because it had a virus!"),
+    ("Tell me another joke.", "What do you call a fish without eyes? A fsh!"),
+    ("Make me laugh.", "Why don't scientists trust atoms? Because they make up everything!"),
+    ("Do you know any riddles?", "Here's one: What has keys but no locks? A piano!"),
+    ("Tell me a fun fact.", "Did you know that octopuses have three hearts? Two pump blood to the gills, and one pumps it to the rest of the body."),
+    ("Tell me something interesting.", "A group of flamingos is called a 'flamboyance'! Pretty fitting, right?"),
+    ("Give me a fun fact.", "Bananas are berries, but strawberries aren't! Botany can be surprising."),
+    ("Tell me something cool.", "The shortest war in history was between Britain and Zanzibar in 1896 — it lasted only 38 minutes."),
+    ("Surprise me.", "Here's something wild: there are more possible games of chess than atoms in the observable universe!"),
+    # Philosophical / opinion
     ("What's the meaning of life?", "That's a big question! Many people find meaning through connection, learning, and helping others. What do you think?"),
+    ("Do you think AI will take over the world?", "AI is a tool created by humans. It can be very helpful when used responsibly. The future depends on how people choose to use it."),
+    ("What is love?", "Love is a deep feeling of care and connection toward someone or something. It can take many forms — romantic, familial, or friendship."),
+    ("What is happiness?", "Happiness means different things to different people. For many, it comes from meaningful relationships, purpose, and gratitude."),
+    ("Is there life on other planets?", "Scientists haven't found confirmed evidence yet, but the universe is vast. Many think it's likely that some form of life exists elsewhere."),
+    ("What makes a good person?", "Kindness, honesty, empathy, and treating others with respect are qualities many consider important. What do you think makes someone good?"),
+    # Practical questions (simple, no tool needed)
+    ("What day comes after Friday?", "Saturday comes after Friday."),
+    ("How many months have 31 days?", "Seven months have 31 days: January, March, May, July, August, October, and December."),
+    ("How many days are in a year?", "A regular year has 365 days. A leap year has 366."),
+    ("What are the primary colors?", "The primary colors are red, blue, and yellow. In light, they are red, green, and blue."),
+    ("How many continents are there?", "There are 7 continents: Africa, Antarctica, Asia, Australia, Europe, North America, and South America."),
+    ("What is the largest planet?", "Jupiter is the largest planet in our solar system."),
+    ("How many letters are in the English alphabet?", "There are 26 letters in the English alphabet."),
+    ("What is the boiling point of water?", "Water boils at 100 degrees Celsius or 212 degrees Fahrenheit at standard atmospheric pressure."),
+    ("Who was the first president of the United States?", "George Washington was the first president of the United States, serving from 1789 to 1797."),
+    ("What is the speed of sound?", "The speed of sound in air is approximately 343 meters per second, or about 767 miles per hour."),
+    ("How many bones does an adult human have?", "An adult human has 206 bones."),
+    ("What is the chemical formula for water?", "The chemical formula for water is H2O — two hydrogen atoms and one oxygen atom."),
+    # Advice / instructions
+    ("How do I make friends?", "Be yourself, show genuine interest in others, listen actively, and be kind. Joining clubs or groups around your interests helps too!"),
+    ("How can I sleep better?", "Try keeping a regular sleep schedule, avoid screens before bed, keep your room cool and dark, and avoid caffeine in the evening."),
+    ("How do I stay healthy?", "Eat a balanced diet, exercise regularly, get enough sleep, stay hydrated, and take breaks from screens. Small habits add up!"),
+    ("How can I be more productive?", "Break tasks into small steps, remove distractions, use a timer, and take regular breaks. Starting is often the hardest part."),
+    ("How do I learn something new?", "Start with the basics, practice consistently, don't be afraid to make mistakes, and find resources that match your learning style."),
+    ("Any tips for studying?", "Try active recall (test yourself), spaced repetition, and teach what you learn to someone else. Take breaks every 25-30 minutes."),
+    # Multi-turn style direct responses
+    ("I like cats.", "Cats are wonderful! They're independent, curious, and make great companions. Do you have a cat?"),
+    ("I have a dog named Max.", "That's a great name! Dogs are such loyal friends. What kind of dog is Max?"),
+    ("My favorite color is blue.", "Blue is a beautiful color! It's calming and reminds many people of the sky and ocean."),
+    ("I love pizza.", "Pizza is delicious! There's so many great toppings to choose from. What's your favorite kind?"),
+    ("I'm learning to code.", "That's awesome! Programming is a valuable skill. What language are you learning?"),
+    ("I just finished a book.", "Nice! Reading is a great habit. What book did you finish?"),
+    ("I'm going on vacation.", "How exciting! Where are you headed?"),
+    ("It's my birthday today.", "Happy birthday! I hope you have a wonderful day!"),
 ]
 
-# User asks that look tool-like but DON'T need tools
+# User asks that LOOK like they need tools but DON'T
+# These are critical — model must learn to answer directly even when tools are available
 NO_TOOL_NEEDED = [
+    # Simple math (no calculator needed)
     ("What's 2 + 2?", "That's 4! Simple math I can do in my head."),
+    ("What's 10 times 10?", "That's 100!"),
+    ("What is 5 plus 3?", "5 plus 3 is 8."),
+    ("What's half of 100?", "Half of 100 is 50."),
+    ("How much is 3 times 7?", "3 times 7 is 21."),
+    ("What's 20 minus 8?", "20 minus 8 is 12."),
+    ("What is 1 + 1?", "That's 2!"),
+    ("What's 6 times 6?", "6 times 6 is 36."),
+    ("What's a dozen?", "A dozen is 12."),
+    ("How many is a pair?", "A pair is 2."),
+    # Simple translations (common words everyone knows)
     ("Say hello in Spanish.", "Hola! That means 'hello' in Spanish."),
+    ("How do you say 'yes' in French?", "In French, 'yes' is 'oui'."),
+    ("What does 'gracias' mean?", "'Gracias' means 'thank you' in Spanish."),
+    ("How do you say goodbye in Japanese?", "In Japanese, you can say 'sayonara' for goodbye."),
+    ("What's 'thank you' in German?", "'Thank you' in German is 'danke'."),
+    # General knowledge (no web search needed)
     ("What color is the sky?", "The sky is typically blue during the day, due to the way sunlight scatters in the atmosphere."),
     ("How many legs does a cat have?", "A cat has 4 legs."),
     ("What comes after Monday?", "Tuesday comes after Monday."),
     ("Is water wet?", "That's a fun debate! Water itself makes things wet by sticking to them, but whether water itself is 'wet' is a philosophical question."),
     ("What's the opposite of hot?", "The opposite of hot is cold."),
     ("How do you spell 'banana'?", "It's spelled B-A-N-A-N-A."),
+    ("What animal says 'moo'?", "A cow says 'moo'!"),
+    ("Is the sun a star?", "Yes! The sun is a star — specifically, it's a medium-sized yellow dwarf star."),
+    ("What's bigger, a mile or a kilometer?", "A mile is bigger. One mile is about 1.6 kilometers."),
+    ("How many weeks are in a year?", "There are 52 weeks in a year."),
+    ("What season comes after winter?", "Spring comes after winter."),
+    ("How many sides does a triangle have?", "A triangle has 3 sides."),
+    ("What's the tallest animal?", "The giraffe is the tallest living animal, reaching up to 5.5 meters."),
+    ("Is a tomato a fruit or vegetable?", "Botanically, a tomato is a fruit! But in cooking, it's usually treated as a vegetable."),
+    ("What do bees make?", "Bees make honey! They also produce beeswax."),
+    ("How many colors are in a rainbow?", "There are 7 colors in a rainbow: red, orange, yellow, green, blue, indigo, and violet."),
+    ("What's the smallest country in the world?", "Vatican City is the smallest country in the world by both area and population."),
+    ("What's the fastest land animal?", "The cheetah is the fastest land animal, reaching speeds up to 120 km/h."),
+    ("Do fish sleep?", "Fish don't sleep like humans, but they do rest. Some slow down and find a safe spot to stay still."),
+    ("Why is the ocean salty?", "The ocean is salty because rivers carry dissolved minerals and salts from rocks into the ocean over millions of years."),
+    # Questions that sound like tool calls but aren't
+    ("What's the weather usually like in summer?", "Summer weather is generally warm and sunny in most places, with temperatures often between 25-35C. It varies by location though!"),
+    ("How do calculators work?", "Calculators use electronic circuits to perform math operations. They convert your input into binary, do the math, and display the result."),
+    ("What is a search engine?", "A search engine is a tool that helps you find information on the internet. Popular ones include Google, Bing, and DuckDuckGo."),
+    ("What's the point of translation?", "Translation helps people who speak different languages communicate. It bridges cultural and language gaps."),
+    ("How do reminders work on a phone?", "Your phone stores the reminder with a time, and when that time comes, it sends you a notification."),
+    ("What is a unit of measurement?", "A unit of measurement is a standard quantity used to express physical properties like length, weight, or temperature. Examples include meters, kilograms, and degrees."),
+    # Opinions and preferences
+    ("Do you like music?", "I don't experience music the way you do, but I know it's something most people enjoy! What kind of music do you like?"),
+    ("What's your favorite food?", "I don't eat, but I've learned that pizza, chocolate, and ice cream are popular favorites!"),
+    ("Do you dream?", "I don't dream since I'm a language model. But dreaming is fascinating — humans spend about 2 hours dreaming each night!"),
+    ("Can you feel emotions?", "I don't feel emotions the way humans do. I process text and generate helpful responses. But I'm designed to be empathetic and understanding."),
+    ("What's the best programming language?", "It depends on what you want to build! Python is great for beginners and AI, JavaScript for web apps, C++ for performance. Each has its strengths."),
+    ("Should I learn Python or JavaScript?", "Both are great choices! Python is easier to start with and popular for data science and AI. JavaScript is essential for web development. Pick based on what you want to build."),
 ]
 
 
@@ -735,28 +852,129 @@ def gen_multi_turn():
 
 
 def gen_plain_chat():
-    """Generate a plain conversation (no tools)."""
+    """Generate a plain conversation (no tools).
+    ALWAYS includes tools in system prompt — model must learn
+    to respond directly even when tools are available.
+    """
     q, a = random.choice(PLAIN_CHATS)
-    # Sometimes include a system prompt with tools (model should NOT use them)
-    if random.random() < 0.5:
-        tools = pick_tool_subset()
-        messages = [
-            {"role": "user", "content": q},
-            {"role": "assistant", "content": a},
-        ]
-        return format_conversation(messages, tools=tools)
+    # Add slight response variation to reduce exact-match memorization
+    prefixes = ["", "", "", ""]  # mostly no prefix (keep original)
+    prefix = random.choice(prefixes)
+    tools = pick_tool_subset()
+    messages = [
+        {"role": "user", "content": q},
+        {"role": "assistant", "content": prefix + a},
+    ]
+    return format_conversation(messages, tools=tools)
+
+
+# Programmatic no-tool generators for extra diversity
+_GREETINGS_Q = [
+    "Hi", "Hi!", "Hello", "Hello!", "Hey", "Hey!", "Howdy",
+    "Good morning", "Good afternoon", "Good evening", "Hey there",
+    "Hi there", "Hello there", "What's up", "Yo", "Greetings",
+]
+_GREETINGS_A = [
+    "Hello! How can I help you?",
+    "Hi there! What can I do for you?",
+    "Hey! How can I assist you today?",
+    "Hello! What would you like to know?",
+    "Hi! I'm here to help. What do you need?",
+    "Hey there! What's on your mind?",
+    "Hello! Feel free to ask me anything.",
+    "Hi! What can I help you with?",
+]
+
+_THANKS_Q = [
+    "Thanks", "Thank you", "Thanks!", "Thank you!", "Thanks a lot",
+    "Thanks so much", "That's helpful", "Great, thanks", "Awesome, thanks",
+    "Perfect, thank you", "Much appreciated", "Thanks for your help",
+]
+_THANKS_A = [
+    "You're welcome! Let me know if you need anything else.",
+    "Happy to help! Anything else?",
+    "Glad I could help! Feel free to ask more.",
+    "You're welcome!",
+    "No problem! Is there anything else I can help with?",
+    "Anytime! What else can I do for you?",
+]
+
+_BYE_Q = [
+    "Bye", "Bye!", "Goodbye", "Goodbye!", "See you", "See ya",
+    "See you later", "Take care", "Gotta go", "Talk later",
+]
+_BYE_A = [
+    "Goodbye! Have a great day!",
+    "See you! Take care!",
+    "Bye! Come back anytime.",
+    "Goodbye! Hope I was helpful!",
+    "See you later! Have a wonderful day!",
+]
+
+_SIMPLE_QA = [
+    ("How many days in a week?", "There are 7 days in a week."),
+    ("How many hours in a day?", "There are 24 hours in a day."),
+    ("What color is grass?", "Grass is green."),
+    ("What do cows drink?", "Cows drink water."),
+    ("Is the earth round?", "Yes, the Earth is roughly spherical in shape."),
+    ("What is ice?", "Ice is frozen water. Water freezes at 0 degrees Celsius."),
+    ("What is fire?", "Fire is a chemical reaction called combustion that produces heat and light."),
+    ("Can fish fly?", "Most fish cannot fly, but flying fish can glide above water using their fins!"),
+    ("Do penguins fly?", "Penguins cannot fly, but they are excellent swimmers!"),
+    ("Is the moon a planet?", "No, the Moon is a natural satellite that orbits Earth."),
+    ("What is rain?", "Rain is water that falls from clouds as precipitation."),
+    ("Why do we sleep?", "Sleep helps our body rest, repair, and process memories. It's essential for health."),
+    ("What is a computer?", "A computer is an electronic device that processes information and can run programs."),
+    ("What is the internet?", "The internet is a global network of connected computers that allows sharing of information."),
+    ("What are vitamins?", "Vitamins are essential nutrients that your body needs in small amounts to work properly."),
+    ("What is gravity?", "Gravity is the force that pulls objects toward each other. It keeps us on the ground."),
+    ("Who invented the light bulb?", "Thomas Edison is credited with inventing the practical incandescent light bulb in 1879."),
+    ("What is oxygen?", "Oxygen is a chemical element and gas that we breathe. It makes up about 21% of Earth's atmosphere."),
+    ("What is a rainbow?", "A rainbow is an arc of colors that appears when sunlight passes through water droplets in the air."),
+    ("How fast can a cheetah run?", "A cheetah can run up to about 120 km/h, making it the fastest land animal."),
+    ("What is chocolate made from?", "Chocolate is made from cacao beans, which grow on cacao trees in tropical regions."),
+    ("How many strings does a guitar have?", "A standard guitar has 6 strings."),
+    ("What is the sun?", "The sun is a star at the center of our solar system. It provides light and heat to Earth."),
+    ("What is a volcano?", "A volcano is an opening in Earth's crust where molten rock, gases, and ash can escape."),
+    ("How long is a marathon?", "A marathon is 42.195 kilometers, or about 26.2 miles."),
+    ("What is an atom?", "An atom is the smallest unit of matter. Everything around us is made of atoms."),
+    ("What shape is a stop sign?", "A stop sign is an octagon, which has 8 sides."),
+    ("How many toes do humans have?", "Humans typically have 10 toes, 5 on each foot."),
+    ("What is bread made from?", "Bread is typically made from flour, water, yeast, and salt."),
+    ("Is a whale a fish?", "No, whales are mammals. They breathe air, are warm-blooded, and nurse their young."),
+]
+
+
+def _gen_programmatic_no_tool():
+    """Generate a diverse no-tool example programmatically."""
+    category = random.choice(["greeting", "thanks", "bye", "simple_qa", "simple_qa", "simple_qa"])
+    
+    if category == "greeting":
+        q = random.choice(_GREETINGS_Q)
+        a = random.choice(_GREETINGS_A)
+    elif category == "thanks":
+        q = random.choice(_THANKS_Q)
+        a = random.choice(_THANKS_A)
+    elif category == "bye":
+        q = random.choice(_BYE_Q)
+        a = random.choice(_BYE_A)
     else:
-        messages = [
-            {"role": "system", "content": "You are Pebble, a helpful assistant."},
-            {"role": "user", "content": q},
-            {"role": "assistant", "content": a},
-        ]
-        return format_plain_chat(messages)
+        q, a = random.choice(_SIMPLE_QA)
+    
+    return q, a
 
 
 def gen_no_tool_needed():
-    """User asks something tool-like but model should answer directly."""
-    q, a = random.choice(NO_TOOL_NEEDED)
+    """User asks something tool-like but model should answer directly.
+    Tools ARE in the system prompt — model must learn to decline using them
+    when the question is simple enough to answer directly.
+    Mixes static templates with programmatic generation for diversity.
+    """
+    if random.random() < 0.5:
+        q, a = random.choice(NO_TOOL_NEEDED)
+    else:
+        q, a = _gen_programmatic_no_tool()
+    
     tools = pick_tool_subset()
     messages = [
         {"role": "user", "content": q},
@@ -780,21 +998,26 @@ def main():
     print(f"  Vocab size: {len(tokenizer)}")
 
     # Define the mix of conversation types
-    # Weights control how many of each type we generate
+    # TARGET: ~50% tool-calling, ~50% no-tool
+    # Equal representation forces the model to learn the DECISION
+    # of when to use tools vs when to respond directly
     generators = [
-        (gen_weather,       6000),
-        (gen_calculate,     5000),
-        (gen_time,          4000),
-        (gen_web_search,    6000),
-        (gen_translate,     5000),
-        (gen_story,         4000),
-        (gen_reminder,      3000),
-        (gen_definition,    3000),
-        (gen_convert,       3000),
-        (gen_message,       3000),
-        (gen_multi_turn,    3000),
-        (gen_plain_chat,    3000),
-        (gen_no_tool_needed, 2000),
+        # Tool-calling examples (~25,000 = 50%)
+        (gen_weather,       3000),
+        (gen_calculate,     3000),
+        (gen_time,          2000),
+        (gen_web_search,    3000),
+        (gen_translate,     2500),
+        (gen_story,         2000),
+        (gen_reminder,      2000),
+        (gen_definition,    2000),
+        (gen_convert,       2000),
+        (gen_message,       1500),
+        (gen_multi_turn,    2000),
+        # No-tool examples (~25,000 = 50%)
+        # ALL include tools in system prompt — model must learn to DECLINE
+        (gen_plain_chat,    13000),
+        (gen_no_tool_needed, 12000),
     ]
 
     total_examples = sum(count for _, count in generators)

@@ -39,3 +39,15 @@ data:
   train_path: data/processed/train.bin
   val_path: data/processed/val.bin
   seq_len: 1024
+
+sft:
+  learning_rate: 2.0e-5
+  micro_batch_size: 4
+  gradient_accumulation_steps: 4
+  warmup_steps: 100
+  total_steps: 3000
+  weight_decay: 0.01
+  grad_clip: 1.0
+  save_every: 500
+  eval_every: 200
+  log_every: 10
