@@ -180,19 +180,26 @@ def main():
     from datasets import load_dataset
 
     owt_progress = os.path.join(output_dir, "progress_owt_70m.json")
-    # Target ~1B tokens from OpenWebText
-    # OpenWebText has ~8M docs averaging ~5K tokens each
-    # ~200K docs = ~1B tokens
     owt_target_tokens = 1_000_000_000
-    owt_max_docs = 300_000  # upper bound, will stop at token target
-    owt = load_dataset("Skylion007/openwebtext", split="train", streaming=True)
-    print(f"  Target: {owt_target_tokens:,} tokens (streaming)")
+
+    # Download the full dataset first (cached by HF), then slice
+    # This is MUCH faster than streaming because HF downloads all
+    # shards in parallel and caches them locally.
+    print("  Downloading dataset (cached after first run)...")
+    owt = load_dataset("Skylion007/openwebtext", split="train")
+    owt_total = len(owt)
+    # Take first 300K docs (or all if fewer) — should give ~1B tokens
+    owt_max_docs = min(300_000, owt_total)
+    print(f"  Total docs available: {owt_total:,}")
+    print(f"  Using first {owt_max_docs:,} docs, target {owt_target_tokens:,} tokens")
 
     owt_docs, owt_tokens = tokenize_dataset(
         iter(owt), owt_max_docs, raw_path, owt_progress,
         tokenizer_path, n_workers, chunk_size, "OpenWebText",
         max_tokens=owt_target_tokens
     )
+    del owt  # free memory
+
     print(f"\n{'=' * 60}")
     print(f"  TOTAL: {owt_tokens:,} tokens")
     print(f"{'=' * 60}")
