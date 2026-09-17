@@ -5,6 +5,8 @@ Uses OpenWebText (~1B tokens) for pretraining.
 Memory-safe: streams data and writes in chunks.
 Resumable: saves progress every chunk.
 
+Uses HuggingFace tokenizers (Rust) for ~20x faster tokenization.
+
 Usage (from project root):
     python scripts/prepare_data_70m.py
 """
@@ -20,7 +22,62 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_DIR = os.path.dirname(SCRIPT_DIR)
 sys.path.insert(0, os.path.join(PROJECT_DIR, "src"))
 
-from tokenizer.bpe import BPETokenizer
+
+def build_fast_tokenizer(slow_tokenizer_path):
+    """
+    Convert our custom BPE tokenizer to HuggingFace tokenizers (Rust).
+    Returns (fast_tokenizer, bos_id, eos_id).
+    """
+    from tokenizers import Tokenizer, models, pre_tokenizers, decoders
+
+    with open(slow_tokenizer_path) as f:
+        data = json.load(f)
+
+    merges = data["merges"]
+    special_tokens_map = data["special_tokens"]
+
+    # GPT-2 style byte-to-unicode mapping
+    def bytes_to_unicode():
+        bs = (list(range(ord("!"), ord("~") + 1))
+              + list(range(ord("\xa1"), ord("\xac") + 1))
+              + list(range(ord("\xae"), ord("\xff") + 1)))
+        cs = bs[:]
+        n = 0
+        for b in range(256):
+            if b not in bs:
+                bs.append(b)
+                cs.append(256 + n)
+                n += 1
+        return {b: chr(c) for b, c in zip(bs, cs)}
+
+    byte_to_char = bytes_to_unicode()
+
+    def token_id_to_str(tid):
+        if tid < 256:
+            return byte_to_char[tid]
+        a, b = merges[tid - 256]
+        return token_id_to_str(a) + token_id_to_str(b)
+
+    vocab = {byte_to_char[i]: i for i in range(256)}
+    merge_pairs = []
+    for idx, (a, b) in enumerate(merges):
+        a_str, b_str = token_id_to_str(a), token_id_to_str(b)
+        vocab[a_str + b_str] = 256 + idx
+        merge_pairs.append((a_str, b_str))
+    for name, tid in special_tokens_map.items():
+        vocab[name] = tid
+
+    bpe = models.BPE(vocab=vocab, merges=merge_pairs)
+    tokenizer = Tokenizer(bpe)
+    tokenizer.pre_tokenizer = pre_tokenizers.ByteLevel(
+        add_prefix_space=False, use_regex=False
+    )
+    tokenizer.decoder = decoders.ByteLevel()
+
+    bos_id = special_tokens_map.get("<|bos|>")
+    eos_id = special_tokens_map.get("<|eos|>")
+    return tokenizer, bos_id, eos_id
+
 
 # --- Worker globals (one per process) ---
 _tokenizer = None
@@ -28,11 +85,9 @@ _bos_id = None
 _eos_id = None
 
 
-def _init_worker(tokenizer_path):
+def _init_worker(slow_tokenizer_path):
     global _tokenizer, _bos_id, _eos_id
-    _tokenizer = BPETokenizer.load(tokenizer_path)
-    _bos_id = _tokenizer.special_tokens.get("<|bos|>")
-    _eos_id = _tokenizer.special_tokens.get("<|eos|>")
+    _tokenizer, _bos_id, _eos_id = build_fast_tokenizer(slow_tokenizer_path)
 
 
 def _tokenize_doc(text):
@@ -44,7 +99,7 @@ def _tokenize_doc(text):
     tokens = []
     if _bos_id is not None:
         tokens.append(_bos_id)
-    tokens.extend(_tokenizer.encode(text))
+    tokens.extend(_tokenizer.encode(text).ids)
     if _eos_id is not None:
         tokens.append(_eos_id)
     return tokens
@@ -164,9 +219,12 @@ def main():
 
     os.makedirs(output_dir, exist_ok=True)
 
-    # === Verify tokenizer ===
-    tokenizer = BPETokenizer.load(tokenizer_path)
-    print(f"Tokenizer: vocab_size={len(tokenizer)}")
+    # === Verify tokenizer exists ===
+    if not os.path.exists(tokenizer_path):
+        print(f"ERROR: Tokenizer not found at {tokenizer_path}")
+        print("Copy tokenizer.json from your local machine to checkpoints/")
+        return
+    print(f"Tokenizer: {tokenizer_path} (using fast Rust backend)")
 
     # === Fresh start if no raw file ===
     if not os.path.exists(raw_path):
@@ -235,10 +293,12 @@ def main():
     print(f"  {train_path}: {os.path.getsize(train_path)/1024**2:.1f} MB")
     print(f"  {val_path}: {os.path.getsize(val_path)/1024**2:.1f} MB")
 
-    # === Verify ===
+    # === Verify (use slow tokenizer for readable decoding) ===
     print("\nVerification...")
+    from tokenizer.bpe import BPETokenizer
+    slow_tok = BPETokenizer.load(tokenizer_path)
     check = np.memmap(train_path, dtype=np.uint16, mode="r")
-    sample = tokenizer.decode(check[:200].tolist())
+    sample = slow_tok.decode(check[:200].tolist())
     print(f"  First 200 tokens:\n  ---\n  {sample[:500]}\n  ---")
     del check
 
