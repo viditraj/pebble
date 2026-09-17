@@ -159,8 +159,8 @@ def main():
     val_path = os.path.join(output_dir, "val_70m.bin")
 
     val_fraction = 0.005  # 0.5% for val (larger dataset)
-    chunk_size = 5_000
-    n_workers = 4  # L4 machine has 8 vCPUs
+    chunk_size = 10_000
+    n_workers = 6  # L4 machine has 8 vCPUs, leave 2 for OS/IO
 
     os.makedirs(output_dir, exist_ok=True)
 
