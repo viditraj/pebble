@@ -13,10 +13,10 @@ model:
   dropout: 0.0
 
 training:
-  # Batch sizes — L4 has 23GB
-  # batch=8 used only 1.6GB. Try batch=64 to utilize GPU properly.
-  micro_batch_size: 64         # sequences per forward pass
-  gradient_accumulation_steps: 1  # effective batch = 64 * 1 = 64
+  # Batch sizes — L4 has 23GB, now using FlashAttention (SDPA)
+  # SDPA avoids O(S^2) attention matrix, so much larger batches fit.
+  micro_batch_size: 32         # sequences per forward pass
+  gradient_accumulation_steps: 2  # effective batch = 32 * 2 = 64
 
   # Learning rate
   max_lr: 3.0e-4

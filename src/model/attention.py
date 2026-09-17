@@ -225,24 +225,15 @@ class GroupedQueryAttention(nn.Module):
             v = v.repeat_interleave(self.n_groups, dim=1)
         # Now k and v have the same number of heads as q.
 
-        # Step 5: Compute attention scores.
-        # scores = Q @ K^T / sqrt(d_k)
-        # (B, n_heads, S, head_dim) @ (B, n_heads, head_dim, S) → (B, n_heads, S, S)
-        scores = torch.matmul(q, k.transpose(-2, -1)) * self.scale
-
-        # Step 6: Apply causal mask (if provided).
-        # The mask has 0 for positions we can attend to, and -inf for positions we can't.
-        if mask is not None:
-            scores = scores + mask
-
-        # Step 7: Softmax to get attention weights (probabilities that sum to 1).
-        # After masking, -inf positions become 0 probability.
-        attn_weights = F.softmax(scores, dim=-1)
-        # attn_weights: (B, n_heads, S, S) — each row sums to 1.0
-
-        # Step 8: Weighted sum of values.
-        # (B, n_heads, S, S) @ (B, n_heads, S, head_dim) → (B, n_heads, S, head_dim)
-        out = torch.matmul(attn_weights, v)
+        # Step 5-8: Compute attention using PyTorch's optimized SDPA.
+        # Uses FlashAttention/memory-efficient kernels under the hood —
+        # never materializes the full (B, heads, S, S) attention matrix,
+        # reducing VRAM from O(S^2) to O(S).
+        out = F.scaled_dot_product_attention(
+            q, k, v,
+            attn_mask=mask,
+            is_causal=(mask is None),  # use built-in causal mask if none provided
+        )
 
         # Step 9: Concatenate all heads.
         # (B, n_heads, S, head_dim) → (B, S, n_heads * head_dim) = (B, S, d_model)

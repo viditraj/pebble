@@ -164,9 +164,11 @@ class Pebble(nn.Module):
         # (batch, seq_len) → (batch, seq_len, d_model)
         x = self.embedding(token_ids)
 
-        # Step 2: Create causal mask
-        # This ensures each position can only attend to itself and earlier positions
-        mask = create_causal_mask(seq_len, x.device)
+        # Step 2: Create causal mask (only needed for inference with offset).
+        # During training, SDPA uses is_causal=True internally (no mask needed).
+        mask = None
+        if offset > 0:
+            mask = create_causal_mask(seq_len, x.device)
 
         # Step 3: Pass through all transformer blocks
         for layer in self.layers:
