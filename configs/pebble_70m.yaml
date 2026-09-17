@@ -14,9 +14,9 @@ model:
 
 training:
   # Batch sizes — L4 has 23GB
-  # batch=8 uses ~13GB VRAM, safe for L4
-  micro_batch_size: 8          # sequences per forward pass
-  gradient_accumulation_steps: 8  # effective batch = 8 * 8 = 64
+  # batch=8 used only 1.6GB. Try batch=64 to utilize GPU properly.
+  micro_batch_size: 64         # sequences per forward pass
+  gradient_accumulation_steps: 1  # effective batch = 64 * 1 = 64
 
   # Learning rate
   max_lr: 3.0e-4
