@@ -1,7 +1,7 @@
 """
-Prepare expanded training data for Pebble-70M.
+Prepare training data for Pebble-70M.
 
-Combines TinyStories + OpenWebText for ~1B tokens total.
+Uses OpenWebText (~1B tokens) for pretraining.
 Memory-safe: streams data and writes in chunks.
 Resumable: saves progress every chunk.
 
@@ -173,36 +173,18 @@ def main():
         with open(raw_path, "wb") as _:
             pass
 
-    total_tokens = 0
-
-    # === Dataset 1: TinyStories (all ~2.1M stories) ===
+    # === OpenWebText (~1B tokens) ===
     print("\n" + "=" * 60)
-    print("  DATASET 1: TinyStories")
+    print("  DATASET: OpenWebText")
     print("=" * 60)
     from datasets import load_dataset
 
-    ts_progress = os.path.join(output_dir, "progress_ts_70m.json")
-    ts = load_dataset("roneneldan/TinyStories", split="train")
-    ts_total = len(ts)
-    print(f"  Total stories: {ts_total:,}")
-
-    ts_docs, ts_tokens = tokenize_dataset(
-        iter(ts), ts_total, raw_path, ts_progress,
-        tokenizer_path, n_workers, chunk_size, "TinyStories"
-    )
-    total_tokens += ts_tokens
-    print(f"  TinyStories total: {ts_tokens:,} tokens")
-
-    # === Dataset 2: OpenWebText (stream ~500M tokens) ===
-    print("\n" + "=" * 60)
-    print("  DATASET 2: OpenWebText")
-    print("=" * 60)
-
     owt_progress = os.path.join(output_dir, "progress_owt_70m.json")
-    # Target ~500M tokens from OpenWebText
-    owt_target_tokens = 500_000_000
-    # OpenWebText has ~8M docs, we only need ~100K for 500M tokens
-    owt_max_docs = 200_000  # upper bound, will stop at token target
+    # Target ~1B tokens from OpenWebText
+    # OpenWebText has ~8M docs averaging ~5K tokens each
+    # ~200K docs = ~1B tokens
+    owt_target_tokens = 1_000_000_000
+    owt_max_docs = 300_000  # upper bound, will stop at token target
     owt = load_dataset("Skylion007/openwebtext", split="train", streaming=True)
     print(f"  Target: {owt_target_tokens:,} tokens (streaming)")
 
@@ -211,12 +193,8 @@ def main():
         tokenizer_path, n_workers, chunk_size, "OpenWebText",
         max_tokens=owt_target_tokens
     )
-    total_tokens += owt_tokens
-    print(f"  OpenWebText total: {owt_tokens:,} tokens")
-
-    # === Summary ===
     print(f"\n{'=' * 60}")
-    print(f"  TOTAL: {total_tokens:,} tokens")
+    print(f"  TOTAL: {owt_tokens:,} tokens")
     print(f"{'=' * 60}")
 
     # === Split into train/val ===
@@ -258,7 +236,7 @@ def main():
     del check
 
     # === Cleanup temp files ===
-    for f in [raw_path, ts_progress, owt_progress]:
+    for f in [raw_path, owt_progress]:
         if os.path.exists(f):
             os.remove(f)
     print("\nDone! Temp files cleaned up.")
